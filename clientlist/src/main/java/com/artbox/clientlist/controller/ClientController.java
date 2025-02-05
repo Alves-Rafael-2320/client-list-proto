@@ -3,8 +3,11 @@ package com.artbox.clientlist.controller;
 
 import com.artbox.clientlist.model.Client;
 import com.artbox.clientlist.repository.ClientRepository;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,11 +47,23 @@ public class ClientController {
         return client.orElse(null);
     }
 
+    /* Old save method, new method with validation added instead
     @PostMapping
     public Client createClient(@RequestBody Client client){
         return clientRepository.save(client);
     }
+    */
 
+    @PostMapping
+    public ResponseEntity<?> createClient(@Valid @RequestBody Client client, BindingResult result){
+        if (result.hasErrors()){
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        clientRepository.save(client);
+        return ResponseEntity.ok(client);
+    }
+    /*
+    Old update method, new method with validation added instead
     @PutMapping("/{id}")
     public Client updateClient(@PathVariable Long id, @RequestBody Client clientDetails){
         Client client = clientRepository.findById(id).orElse(null);
@@ -63,7 +78,24 @@ public class ClientController {
         }
         return null;
     }
+    */
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateClient(@Valid @RequestBody Client clientDetails, BindingResult result, @PathVariable Long id){
+        if (result.hasErrors()){
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
+        Client client = clientRepository.findById(id).orElse(null);
 
+        if (client != null){
+            client.setName(clientDetails.getName());
+            client.setEmail(clientDetails.getEmail());
+            client.setPhone(clientDetails.getPhone());
+            client.setAdress(clientDetails.getAdress());
+
+            return ResponseEntity.ok(clientRepository.save(client));
+        }
+        return ResponseEntity.notFound().build();
+    }
     @DeleteMapping("/{id}")
     public void deleteClient(@PathVariable Long id){
         clientRepository.deleteById(id);
