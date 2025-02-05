@@ -20,6 +20,7 @@ public class ClientController {
     @Autowired
     private ClientRepository clientRepository;
 
+    @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/findAllClients")
     public List<Client> findAllClients(){
         return clientRepository.findAll(Sort.by(Sort.Order.asc("name")));

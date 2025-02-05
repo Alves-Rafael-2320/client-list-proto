@@ -1,0 +1,10 @@
+📂📂 client-list-react (raiz do projeto)
+├── 📂 src
+│ ├── 📂 components → Componentes reutilizáveis
+│ ├── 📂 pages → Páginas principais da aplicação
+│ ├── 📂 services → Comunicação com o backend
+│ │ └── 📄 api.js → Configuração do Axios
+│ ├── 📄 App.js → Componente principal
+│ ├── 📄 index.js → Ponto de entrada
+├── 📄 package.json → Configuração do projeto
+└── 📄 .gitignore → Arquivos ignorados pelo Git
