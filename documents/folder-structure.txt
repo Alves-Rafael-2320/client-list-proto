@@ -1,0 +1,12 @@
+📂 cliente-lista/
+├── 📂 src/
+│ ├── 📂 main/
+│ │ ├── 📂 java/com/seuusuario/clientelista/
+│ │ │ ├── 📂 controller/ → Controladores (Endpoints da API)
+│ │ │ ├── 📂 repository/ → Interfaces de acesso ao banco de dados
+│ │ │ ├── 📂 model/ → Modelos (Entidades do banco)
+│ │ │ ├── 📄 ClienteListaApplication.java → Classe principal do Spring Boot
+│ │ ├── 📂 resources/
+│ │ │ ├── 📄 application.properties → Configurações do banco de dados e do Spring Boot
+├── 📄 pom.xml → Arquivo de dependências do Maven
+└── 📄 README.md → Documentação do projeto (opcional)
