@@ -37,13 +37,13 @@ public class ClientController {
     }
 
     @GetMapping("/findByPhone")
-    public List<Client> findBy(@RequestParam String phone){
+    public List<Client> findByPhone(@RequestParam String phone){
         return clientRepository.findByPhoneContainingIgnoreCase(phone);
     }
 
 
     @GetMapping("/{id}")
-    public Client getClientById(@PathVariable Long id){
+    public Client findClientById(@PathVariable Long id){
         Optional<Client> client = clientRepository.findById(id);
         return client.orElse(null);
     }
@@ -93,13 +93,18 @@ public class ClientController {
             client.setPhone(clientDetails.getPhone());
             client.setAdress(clientDetails.getAdress());
 
-            return ResponseEntity.ok(clientRepository.save(client));
+            clientRepository.save(client);
+            return ResponseEntity.noContent().build();
         }
         return ResponseEntity.notFound().build();
     }
     @DeleteMapping("/{id}")
-    public void deleteClient(@PathVariable Long id){
-        clientRepository.deleteById(id);
+    public ResponseEntity<String> deleteClient(@PathVariable Long id){
+        if(clientRepository.existsById(id)){
+            clientRepository.deleteById(id);
+            return ResponseEntity.ok("Client Deleted.");
+        }
+        return ResponseEntity.notFound().build();
     }
 
 
