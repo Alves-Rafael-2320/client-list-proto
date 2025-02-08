@@ -5,6 +5,9 @@ import com.artbox.clientlist.model.Client;
 import com.artbox.clientlist.repository.ClientRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,6 +22,18 @@ public class ClientController {
 
     @Autowired
     private ClientRepository clientRepository;
+
+    @GetMapping("/pagedClients")
+    public Page<Client> findPagedClients(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "name") String sortBy,
+            @RequestParam(defaultValue = "asc") String direction
+    ){
+        Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+        return clientRepository.findAll(pageable);
+    }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/findAllClients")
