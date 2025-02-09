@@ -1,6 +1,7 @@
 package com.artbox.clientlist.controller;
 
 
+import com.artbox.clientlist.dto.ClientDTO;
 import com.artbox.clientlist.model.Client;
 import com.artbox.clientlist.repository.ClientRepository;
 import com.artbox.clientlist.service.ClientService;
@@ -38,28 +39,28 @@ public class ClientController {
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/findAllClients")
-    public List<Client> findAllClients(){
+    public List<ClientDTO> findAllClients(){
         return clientService.findAllClients();
     }
 
     @GetMapping("/findByName")
-    public List<Client> findByName(@RequestParam String name){
+    public List<ClientDTO> findByName(@RequestParam String name){
         return clientService.findByName(name);
     }
 
     @GetMapping("/findByEmail")
-    public List<Client> findByEmail(@RequestParam String email){
+    public List<ClientDTO> findByEmail(@RequestParam String email){
         return clientService.findByEmail(email);
     }
 
     @GetMapping("/findByPhone")
-    public List<Client> findByPhone(@RequestParam String phone){
+    public List<ClientDTO> findByPhone(@RequestParam String phone){
         return clientService.findByPhone(phone);
     }
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<Client> findCLientById(@PathVariable Long id){
+    public ResponseEntity<ClientDTO> findCLientById(@PathVariable Long id){
         return clientService.findClientById(id)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
