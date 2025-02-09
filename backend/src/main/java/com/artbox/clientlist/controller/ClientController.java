@@ -3,6 +3,7 @@ package com.artbox.clientlist.controller;
 
 import com.artbox.clientlist.model.Client;
 import com.artbox.clientlist.repository.ClientRepository;
+import com.artbox.clientlist.service.ClientService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -21,47 +22,49 @@ import java.util.Optional;
 public class ClientController {
 
     @Autowired
-    private ClientRepository clientRepository;
+    private ClientService clientService;
 
     @GetMapping("/pagedClients")
     public Page<Client> findPagedClients(
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "0"    ) int page,
             @RequestParam(defaultValue = "10") int size,
             @RequestParam(defaultValue = "name") String sortBy,
             @RequestParam(defaultValue = "asc") String direction
     ){
         Sort sort = direction.equalsIgnoreCase("asc") ? Sort.by(sortBy).ascending() : Sort.by(sortBy).descending();
         Pageable pageable = PageRequest.of(page, size, sort);
-        return clientRepository.findAll(pageable);
+        return clientService.getPagedClients(pageable);
     }
 
     @CrossOrigin(origins = "http://localhost:3000")
     @GetMapping("/findAllClients")
     public List<Client> findAllClients(){
-        return clientRepository.findAll(Sort.by(Sort.Order.asc("name")));
+        return clientService.findAllClients();
     }
 
     @GetMapping("/findByName")
     public List<Client> findByName(@RequestParam String name){
-        return clientRepository.findByNameContainingIgnoreCase(name);
+        return clientService.findByName(name);
     }
 
     @GetMapping("/findByEmail")
     public List<Client> findByEmail(@RequestParam String email){
-        return clientRepository.findByEmailContainingIgnoreCase(email);
+        return clientService.findByEmail(email);
     }
 
     @GetMapping("/findByPhone")
     public List<Client> findByPhone(@RequestParam String phone){
-        return clientRepository.findByPhoneContainingIgnoreCase(phone);
+        return clientService.findByPhone(phone);
     }
 
 
     @GetMapping("/{id}")
-    public Client findClientById(@PathVariable Long id){
-        Optional<Client> client = clientRepository.findById(id);
-        return client.orElse(null);
+    public ResponseEntity<Client> findCLientById(@PathVariable Long id){
+        return clientService.findClientById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
+
 
     /* Old save method, new method with validation added instead
     @PostMapping
@@ -75,7 +78,7 @@ public class ClientController {
         if (result.hasErrors()){
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        clientRepository.save(client);
+        clientService.createClient(client);
         return ResponseEntity.ok(client);
     }
     /*
@@ -100,26 +103,16 @@ public class ClientController {
         if (result.hasErrors()){
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
-        Client client = clientRepository.findById(id).orElse(null);
-
-        if (client != null){
-            client.setName(clientDetails.getName());
-            client.setEmail(clientDetails.getEmail());
-            client.setPhone(clientDetails.getPhone());
-            client.setAdress(clientDetails.getAdress());
-
-            clientRepository.save(client);
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.notFound().build();
+        return clientService.updateClient(id, clientDetails)
+                ? ResponseEntity.noContent().build():
+                ResponseEntity.notFound().build();
     }
+
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteClient(@PathVariable Long id){
-        if(clientRepository.existsById(id)){
-            clientRepository.deleteById(id);
-            return ResponseEntity.ok("Client Deleted.");
-        }
-        return ResponseEntity.notFound().build();
+    public ResponseEntity<Void> deleteClient(@PathVariable Long id){
+        return clientService.deleteClient(id)
+                ?ResponseEntity.noContent().build()
+                :ResponseEntity.notFound().build();
     }
 
 
