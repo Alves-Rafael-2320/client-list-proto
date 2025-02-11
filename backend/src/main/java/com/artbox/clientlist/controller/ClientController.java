@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +26,13 @@ public class ClientController {
     @Autowired
     private ClientService clientService;
 
+
+    @GetMapping("/searchClients")
+    public List<ClientDTO> searchClients(@RequestParam(required = false) String name,
+                                         @RequestParam(required = false) String email,
+                                         @RequestParam(required = false) String phone){
+        return clientService.searchClients(name, email, phone);
+    }
     @GetMapping("/pagedClients")
     public Page<Client> findPagedClients(
             @RequestParam(defaultValue = "0"    ) int page,
@@ -37,26 +45,13 @@ public class ClientController {
         return clientService.getPagedClients(pageable);
     }
 
-    @CrossOrigin(origins = "http://localhost:3000")
-    @GetMapping("/findAllClients")
-    public List<ClientDTO> findAllClients(){
-        return clientService.findAllClients();
-    }
 
-    @GetMapping("/findByName")
-    public List<ClientDTO> findByName(@RequestParam String name){
-        return clientService.findByName(name);
-    }
 
-    @GetMapping("/findByEmail")
-    public List<ClientDTO> findByEmail(@RequestParam String email){
-        return clientService.findByEmail(email);
-    }
 
-    @GetMapping("/findByPhone")
-    public List<ClientDTO> findByPhone(@RequestParam String phone){
-        return clientService.findByPhone(phone);
-    }
+
+
+
+
 
 
     @GetMapping("/{id}")

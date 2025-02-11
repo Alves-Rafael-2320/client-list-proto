@@ -34,55 +34,31 @@ public class ClientService {
         return clientRepository.findAll(pageable);
     }
 
-    public List<ClientDTO> findAllClients(){
-        logger.info("Fetching all clients from the database");
+    public List<ClientDTO> searchClients (String name, String email, String phone){
+        logger.info("Searching clients with filters - Name{}, Email{}, Phone{} ", name, email, phone);
+        List<Client> clients = clientRepository.findAll();
 
-        return clientRepository.findAll(Sort.by(Sort.Order.asc("name")))
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
-    }
-
-    public List<ClientDTO> findByName(String name){
-        logger.info("Fetching client by name: {}", name);
-        List<Client> client = clientRepository.findByNameContainingIgnoreCase(name);
-
-        if (client.isEmpty()){
-            logger.warn("No clients found with name: {}", name);
+        if (name != null && !name.isEmpty()) {
+            clients = clients.stream()
+                    .filter(client -> client.getName() != null && client.getName().toLowerCase().contains(name.toLowerCase()))
+                    .toList();
         }
-
-        return clientRepository.findByNameContainingIgnoreCase(name)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
-    }
-
-    public List<ClientDTO> findByPhone(String phone){
-        logger.info("Fetching client by phone: {}", phone);
-        List<Client> client = clientRepository.findByPhoneContainingIgnoreCase(phone);
-
-        if (client.isEmpty()){
-            logger.warn("No clients found with phone: {}", phone);
+        if (email != null && !email.isEmpty()) {
+            clients = clients.stream()
+                    .filter(client -> client.getEmail() != null && client.getEmail().toLowerCase().contains(email.toLowerCase()))
+                    .toList();
         }
-
-        return clientRepository.findByPhoneContainingIgnoreCase(phone)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
-    }
-
-    public List<ClientDTO> findByEmail(String email){
-        logger.info("Fetching client by email: {}", email);
-
-        List<Client> client = clientRepository.findByEmailContainingIgnoreCase(email);
-
-        if (client.isEmpty()){
-            logger.warn("No clients found with email: {}", email);
+        if (phone != null && !phone.isEmpty()) {
+            clients = clients.stream()
+                    .filter(client -> client.getPhone() != null && client.getPhone().contains(phone))
+                    .toList();
         }
-        return clientRepository.findByEmailContainingIgnoreCase(email)
-                .stream()
-                .map(this::mapToDTO)
-                .toList();
+        if (clients.isEmpty()){
+            logger.warn("No clients found matching filters - Name{}, Email{}, Phone{} \", name, email, phone");
+        }else{
+            logger.info("Found {} client(s) matching filters", clients.size());
+        }
+        return clients.stream().map(this::mapToDTO).toList();
     }
 
 
