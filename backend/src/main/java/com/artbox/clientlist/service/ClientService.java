@@ -36,27 +36,12 @@ public class ClientService {
 
     public List<ClientDTO> searchClients (String name, String email, String phone){
         logger.info("Searching clients with filters - Name{}, Email{}, Phone{} ", name, email, phone);
-        List<Client> clients = clientRepository.findAll();
+        List<Client> clients = clientRepository.searchClients(name, email, phone);
 
-        if (name != null && !name.isEmpty()) {
-            clients = clients.stream()
-                    .filter(client -> client.getName() != null && client.getName().toLowerCase().contains(name.toLowerCase()))
-                    .toList();
-        }
-        if (email != null && !email.isEmpty()) {
-            clients = clients.stream()
-                    .filter(client -> client.getEmail() != null && client.getEmail().toLowerCase().contains(email.toLowerCase()))
-                    .toList();
-        }
-        if (phone != null && !phone.isEmpty()) {
-            clients = clients.stream()
-                    .filter(client -> client.getPhone() != null && client.getPhone().contains(phone))
-                    .toList();
-        }
         if (clients.isEmpty()){
-            logger.warn("No clients found matching filters - Name{}, Email{}, Phone{} \", name, email, phone");
-        }else{
-            logger.info("Found {} client(s) matching filters", clients.size());
+            logger.warn("No clients found matching filters - Name{}, Email{}, Phone{}", name, email, phone);
+        }else {
+            logger.info("Found {} client(s) matching filters ", clients.size());
         }
         return clients.stream().map(this::mapToDTO).toList();
     }
