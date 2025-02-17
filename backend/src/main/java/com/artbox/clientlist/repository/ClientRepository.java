@@ -23,7 +23,8 @@ public interface ClientRepository extends JpaRepository<Client, Long> {
             "(:name IS NULL OR LOWER(c.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND" +
             "(:email IS NULL OR LOWER(c.email) LIKE LOWER(CONCAT('%', :email,'%'))) AND" +
             "(:phone IS NULL OR c.phone LIKE CONCAT('%', :phone, '%'))")
-    List<Client> searchClients(@Param("name") String name,
+    Page<Client> searchClients(@Param("name") String name,
                                @Param("email") String email,
-                               @Param("phone") String phone);
+                               @Param("phone") String phone,
+                               Pageable pageable);
 }

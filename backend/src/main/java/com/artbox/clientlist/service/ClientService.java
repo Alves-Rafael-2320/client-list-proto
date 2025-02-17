@@ -5,6 +5,7 @@ import com.artbox.clientlist.model.Client;
 import com.artbox.clientlist.repository.ClientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -34,16 +35,22 @@ public class ClientService {
         return clientRepository.findAll(pageable);
     }
 
-    public List<ClientDTO> searchClients (String name, String email, String phone){
+    public Page<ClientDTO> searchClients (String name, String email, String phone,
+                                          int page, int size, String sortBy, String direction){
         logger.info("Searching clients with filters - Name{}, Email{}, Phone{} ", name, email, phone);
-        List<Client> clients = clientRepository.searchClients(name, email, phone);
+        logger.info("Paging filters - Page: {}, Size: {}, SortBy: {}, Direction: {}", page, size, sortBy, direction);
+
+        Sort sort = direction.equalsIgnoreCase("asc")? Sort.by(sortBy).ascending():Sort.by(sortBy).descending();
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        Page<Client> clients = clientRepository.searchClients(name, email, phone, pageable);
 
         if (clients.isEmpty()){
             logger.warn("No clients found matching filters - Name{}, Email{}, Phone{}", name, email, phone);
         }else {
-            logger.info("Found {} client(s) matching filters ", clients.size());
+            logger.info("Found {} client(s) matching filters ", clients.getTotalElements());
         }
-        return clients.stream().map(this::mapToDTO).toList();
+        return clients.map(this::mapToDTO);
     }
 
 

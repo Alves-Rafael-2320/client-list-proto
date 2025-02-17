@@ -28,10 +28,15 @@ public class ClientController {
 
 
     @GetMapping("/searchClients")
-    public List<ClientDTO> searchClients(@RequestParam(required = false) String name,
+    public Page<ClientDTO> searchClients(@RequestParam(required = false) String name,
                                          @RequestParam(required = false) String email,
-                                         @RequestParam(required = false) String phone){
-        return clientService.searchClients(name, email, phone);
+                                         @RequestParam(required = false) String phone,
+                                         @RequestParam (defaultValue = "0") int page,
+                                         @RequestParam (defaultValue = "10") int size,
+                                         @RequestParam (defaultValue = "name") String sortBy,
+                                         @RequestParam (defaultValue = "asc") String direction
+                                         ){
+        return clientService.searchClients(name, email, phone, page, size, sortBy, direction);
     }
     @GetMapping("/pagedClients")
     public Page<Client> findPagedClients(
