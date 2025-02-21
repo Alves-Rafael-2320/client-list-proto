@@ -1,19 +1,14 @@
 import React from "react";
+import { Routes, Route } from "react-router-dom";
+import Login from "./pages/Login";
+import Clients from "./pages/Clients";
 
-import {BrowserRouter as Router, Routes, Route} from "react-router-dom";
-
-import ClientList from "./pages/ClientList";
-
-function App(){
-  return(
-    <Router>
-      <div>
-        <h1>Artbox Vidraçaria</h1>
-        <Routes>
-          <Route path="/" element = {<ClientList />}></Route>
-        </Routes>
-      </div>
-    </Router>
+function App() {
+  return (
+    <Routes>
+      <Route path="/" element={<Login />} />
+      <Route path="/clients" element={<Clients />} />
+    </Routes>
   );
 }
 

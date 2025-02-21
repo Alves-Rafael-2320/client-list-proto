@@ -19,13 +19,14 @@ import java.security.PublicKey;
 import java.util.List;
 import java.util.Optional;
 
+
+//@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/clients")
 public class ClientController {
 
     @Autowired
     private ClientService clientService;
-
 
     @GetMapping("/searchClients")
     public Page<ClientDTO> searchClients(@RequestParam(required = false) String name,
