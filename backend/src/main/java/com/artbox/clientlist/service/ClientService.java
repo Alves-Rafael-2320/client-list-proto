@@ -25,7 +25,7 @@ public class ClientService {
     private ClientRepository clientRepository;
 
     private ClientDTO mapToDTO(Client client){
-        return new ClientDTO(client.getName(),client.getEmail(),client.getPhone());
+        return new ClientDTO(client.getId(),client.getName(),client.getEmail(),client.getPhone());
     }
 
     // Custom CRUD Methods
